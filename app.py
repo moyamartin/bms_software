@@ -6,10 +6,54 @@ from matplotlib.figure import Figure
 import logging
 import numpy as np
 import tkinter
+<<<<<<< HEAD
 
 
 root = tkinter.Tk()
 root.wm_title("BMS software")
+=======
+import serial
+
+SERIAL_PORT='/dev/ttyUSB0'
+BAUDRATE=115200
+serial_if = serial.Serial()
+serial_if.port = SERIAL_PORT
+serial_if.baudrate = BAUDRATE
+
+def do_connect_bms():
+    try:
+        serial_if.open()
+        tkinter.messagebox.\
+                showinfo("Success", "{} connected to bms scope".
+                         format(SERIAL_PORT))
+        connect_button.configure(text="Disconnect {}".format(SERIAL_PORT))
+        connect_button.configure(command=do_disconnect_bms)
+        do_read_serial()
+    except serial.serialutil.SerialException as e:
+        logging.error(e)
+        tkinter.messagebox.\
+                showinfo("Failure", "Check USB-UART connection to BMS")
+
+
+
+def do_disconnect_bms():
+    serial_if.close()
+    tkinter.messagebox.\
+            showinfo("Success", "{} disconnected to bms scope".
+                     format(SERIAL_PORT))
+    connect_button.configure(text="Disconnect {}".format(SERIAL_PORT))
+    connect_button.configure(command=do_disconnect_bms)
+
+
+def do_read_serial():
+    line = serial_if.readline()
+    if line:
+        logging.warning(line)
+    root.after(10, do_read_serial)
+
+root = tkinter.Tk()
+root.wm_title("BMS scope")
+>>>>>>> mmoya/add_uart_handler
 
 fig = Figure(figsize=(5, 4), dpi=100)
 t = np.arange(0, 3, .01)
@@ -23,6 +67,7 @@ toolbar = NavigationToolbar2Tk(canvas, root)
 toolbar.update()
 canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
+<<<<<<< HEAD
 
 def on_key_press(event):
     logging.info("you pressed {}".format(event.key))
@@ -30,15 +75,30 @@ def on_key_press(event):
 
 
 canvas.mpl_connect("key_press_event", on_key_press)
+=======
+#canvas.mpl_connect("key_press_event", on_key_press)
+>>>>>>> mmoya/add_uart_handler
 
 
 def _quit():
     root.quit()     # stops mainloop
     root.destroy()  # this is necessary on Windows to prevent
+<<<<<<< HEAD
                     # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
 
 button = tkinter.Button(master=root, text="Quit", command=_quit)
 button.pack(side=tkinter.BOTTOM)
+=======
+
+bottom = tkinter.Frame(root)
+bottom.pack(side=tkinter.BOTTOM)
+quit_button = tkinter.Button(master=root, text='Quit', command=_quit)
+quit_button.pack(in_=bottom, side=tkinter.LEFT)
+connect_button = tkinter.Button(master=root, text='Connect BMS',
+                                command=do_connect_bms)
+connect_button.pack(in_=bottom, side=tkinter.LEFT)
+
+>>>>>>> mmoya/add_uart_handler
 
 tkinter.mainloop()
