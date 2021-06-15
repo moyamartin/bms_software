@@ -6,12 +6,6 @@ from matplotlib.figure import Figure
 import logging
 import numpy as np
 import tkinter
-<<<<<<< HEAD
-
-
-root = tkinter.Tk()
-root.wm_title("BMS software")
-=======
 import serial
 
 SERIAL_PORT='/dev/ttyUSB0'
@@ -19,6 +13,7 @@ BAUDRATE=115200
 serial_if = serial.Serial()
 serial_if.port = SERIAL_PORT
 serial_if.baudrate = BAUDRATE
+
 
 def do_connect_bms():
     try:
@@ -53,7 +48,6 @@ def do_read_serial():
 
 root = tkinter.Tk()
 root.wm_title("BMS scope")
->>>>>>> mmoya/add_uart_handler
 
 fig = Figure(figsize=(5, 4), dpi=100)
 t = np.arange(0, 3, .01)
@@ -67,29 +61,11 @@ toolbar = NavigationToolbar2Tk(canvas, root)
 toolbar.update()
 canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
-<<<<<<< HEAD
-
-def on_key_press(event):
-    logging.info("you pressed {}".format(event.key))
-    key_press_handler(event, canvas, toolbar)
-
-
-canvas.mpl_connect("key_press_event", on_key_press)
-=======
-#canvas.mpl_connect("key_press_event", on_key_press)
->>>>>>> mmoya/add_uart_handler
 
 
 def _quit():
     root.quit()     # stops mainloop
     root.destroy()  # this is necessary on Windows to prevent
-<<<<<<< HEAD
-                    # Fatal Python Error: PyEval_RestoreThread: NULL tstate
-
-
-button = tkinter.Button(master=root, text="Quit", command=_quit)
-button.pack(side=tkinter.BOTTOM)
-=======
 
 bottom = tkinter.Frame(root)
 bottom.pack(side=tkinter.BOTTOM)
@@ -98,7 +74,5 @@ quit_button.pack(in_=bottom, side=tkinter.LEFT)
 connect_button = tkinter.Button(master=root, text='Connect BMS',
                                 command=do_connect_bms)
 connect_button.pack(in_=bottom, side=tkinter.LEFT)
-
->>>>>>> mmoya/add_uart_handler
 
 tkinter.mainloop()
