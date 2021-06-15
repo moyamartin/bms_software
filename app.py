@@ -1,25 +1,44 @@
-import tkinter as tk
+# Implement the default Matplotlib key bindings.
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
+        NavigationToolbar2Tk
+from matplotlib.figure import Figure
+import logging
+import numpy as np
+import tkinter
 
-class Application(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.pack()
-        self.create_widgets()
 
-    def create_widgets(self):
-        self.hi_there = tk.Button(self)
-        self.hi_there["text"] = "Hello World\n(click me)"
-        self.hi_there["command"] = self.say_hi
-        self.hi_there.pack(side="top")
+root = tkinter.Tk()
+root.wm_title("BMS software")
 
-        self.quit = tk.Button(self, text="QUIT", fg="red",
-                              command=self.master.destroy)
-        self.quit.pack(side="bottom")
+fig = Figure(figsize=(5, 4), dpi=100)
+t = np.arange(0, 3, .01)
+fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
 
-    def say_hi(self):
-        print("hi there, everyone!")
+canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
+canvas.draw()
+canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
-root = tk.Tk()
-app = Application(master=root)
-app.mainloop()
+toolbar = NavigationToolbar2Tk(canvas, root)
+toolbar.update()
+canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+
+
+def on_key_press(event):
+    logging.info("you pressed {}".format(event.key))
+    key_press_handler(event, canvas, toolbar)
+
+
+canvas.mpl_connect("key_press_event", on_key_press)
+
+
+def _quit():
+    root.quit()     # stops mainloop
+    root.destroy()  # this is necessary on Windows to prevent
+                    # Fatal Python Error: PyEval_RestoreThread: NULL tstate
+
+
+button = tkinter.Button(master=root, text="Quit", command=_quit)
+button.pack(side=tkinter.BOTTOM)
+
+tkinter.mainloop()
